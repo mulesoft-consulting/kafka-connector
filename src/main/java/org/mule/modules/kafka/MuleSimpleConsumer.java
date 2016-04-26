@@ -1,4 +1,7 @@
-package org.mule.module.kafka;
+/**
+ * (c) 2003-2016 MuleSoft, Inc. The software in this package is published under the terms of the Commercial Free Software license V.1 a copy of which has been included with this distribution in the LICENSE.md file.
+ */
+package org.mule.modules.kafka;
 
 import kafka.api.FetchRequest;
 import kafka.api.FetchRequestBuilder;
@@ -27,7 +30,7 @@ public class MuleSimpleConsumer {
 	private List<String> m_seedBrokers = null;
 	private int m_port;
 	
-	public MuleSimpleConsumer(ArrayList<String> brokers, int port) {
+	public MuleSimpleConsumer(List<String> brokers, int port) {
 		m_seedBrokers = brokers;
 		m_port = port;
 	}
