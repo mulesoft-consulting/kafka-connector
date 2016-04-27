@@ -4,7 +4,9 @@
 package org.mule.modules.kafka;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 
+import org.mule.api.MuleContext;
 import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Processor;
@@ -15,6 +17,8 @@ import org.mule.api.callback.StopSourceCallback;
 import org.mule.modules.kafka.config.ConnectorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
 
 /**
  * Cloud Connector
@@ -28,7 +32,6 @@ public class KafkaConnector {
 
 	@Config
 	ConnectorConfig config;
-	
 	public ConnectorConfig getConfig() {
 		return config;
 	}
@@ -48,16 +51,22 @@ public class KafkaConnector {
 	}
 
 	@Source(name = "ConsumerGroup", friendlyName = "ConsumerGroup")
-	public void consumerGroup(SourceCallback callback, String topic, int partitions) {
+	public StopSourceCallback consumerGroup(SourceCallback callback, String topic, int partitions) {
 		Properties props = config.getZookeeperProperties();
-		
+
 		if (props == null) {
 			logger.error("Missing Zookeeper Connection Properties");
 		} else {
-			MuleConsumerGroup consumer = new MuleConsumerGroup(props);
+			final MuleConsumerGroup consumer = new MuleConsumerGroup(props);
 			consumer.run(callback, topic, partitions);
-			consumer.shutdown();
+			return new StopSourceCallback() {
+
+				public void stop() throws Exception {
+					consumer.shutdown();
+				}
+			};
 		}
+		return null;
 	}
 	
 	@Processor(name = "Producer", friendlyName = "Producer")
