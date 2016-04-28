@@ -140,7 +140,6 @@ public class ConnectorConfig {
 			if (getConsumerGroupExtendedProperties() != null)
 				props.putAll(getConsumerGroupExtendedProperties());
 			props.put("bootstrap.servers", getBootstrapServers());
-			props.put("zookeeper.connect", getZookeeperUrl());
 			props.put("group.id", getGroupId());
 		}
 		

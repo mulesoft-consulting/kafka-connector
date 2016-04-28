@@ -21,7 +21,7 @@ import java.util.Properties;
  */
 public class KafkaAbstractTestCases extends AbstractTestCase<KafkaConnector> {
 
-    protected static final String CONSUMER_GROUP_SOURCE_NAME = "consumerGroup";
+    protected static final String CONSUMER_GROUP_SOURCE_NAME = "consumer";
 
     public KafkaAbstractTestCases() {
         super(KafkaConnector.class);
@@ -39,19 +39,13 @@ public class KafkaAbstractTestCases extends AbstractTestCase<KafkaConnector> {
     protected void createNewTestTopic(String topicName) throws FuntionalTestException {
         ZkUtils zkUtils = getZkUtils();
         try {
-            AdminUtils.createTopic(zkUtils, topicName, 1, 1, new Properties()/*getNewTopicProperties()*/);
+            AdminUtils.createTopic(zkUtils, topicName, 1, 1, new Properties());
             Map<String, Properties> map = AdminUtils.fetchAllTopicConfigs(zkUtils);
             System.out.println("topic metadata list:\n" + map);
         } finally {
             zkUtils.close();
         }
 
-    }
-
-    private Properties getNewTopicProperties() {
-        Properties newTopicProperties = new Properties();
-        newTopicProperties.setProperty("flush.messages", "1");
-        return newTopicProperties;
     }
 
     @NotNull private ZkUtils getZkUtils() throws FuntionalTestException {
@@ -89,12 +83,20 @@ public class KafkaAbstractTestCases extends AbstractTestCase<KafkaConnector> {
         return getClass().getClassLoader().getResourceAsStream(System.getProperty("automation-credentials.properties"));
     }
 
-    protected void initializeConsumerGroupSource(String topicName, Integer partitions) throws FuntionalTestException {
+    protected void initializeConsumerSource(String topicName, Integer partitions) throws FuntionalTestException {
         Object[] consumerGroupParams = new Object[] { null, topicName, partitions};
         try {
             getDispatcher().initializeSource(CONSUMER_GROUP_SOURCE_NAME, consumerGroupParams);
         } catch (Throwable throwable) {
-            throw new FuntionalTestException("Unable to initialize consumer group source.", throwable);
+            throw new FuntionalTestException("Unable to initialize consumer source.", throwable);
+        }
+    }
+
+    protected void shutdownConsumerSource() throws FuntionalTestException {
+        try {
+            getDispatcher().shutDownSource(CONSUMER_GROUP_SOURCE_NAME);
+        } catch (Throwable throwable) {
+            throw new FuntionalTestException("Unable to shutdown consumer source.", throwable);
         }
     }
 

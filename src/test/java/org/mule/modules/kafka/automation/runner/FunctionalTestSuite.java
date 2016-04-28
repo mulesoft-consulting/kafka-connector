@@ -15,7 +15,7 @@ import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         ProducerTestCases.class,
-//        ConsumerGroupTestCases.class
+        ConsumerGroupTestCases.class
 })
 public class FunctionalTestSuite {
 

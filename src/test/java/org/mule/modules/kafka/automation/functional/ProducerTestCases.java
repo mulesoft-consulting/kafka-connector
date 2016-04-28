@@ -22,17 +22,18 @@ public class ProducerTestCases extends KafkaAbstractTestCases {
     public void setUp() throws FuntionalTestException {
         testTopicName = String.format(TOPIC_NAME_TEMPLATE, System.currentTimeMillis());
         createNewTestTopic(testTopicName);
-        initializeConsumerGroupSource(testTopicName, 1);
+        initializeConsumerSource(testTopicName, 1);
     }
 
     @After
     public void tearDown() throws FuntionalTestException {
         deleteCreatedTopic(testTopicName);
+        shutdownConsumerSource();
     }
 
     @Test
     public void testProducer() throws FuntionalTestException {
-        getConnector().producer(testTopicName, TEST_MESSAGE_KEY, TEST_MESSAGE_PAYLOAD, 1);
+        getConnector().producer(testTopicName, TEST_MESSAGE_KEY, TEST_MESSAGE_PAYLOAD);
         List<Object> messages = collectSourceMessages(CONSUMER_GROUP_SOURCE_NAME, 60000);
         validateProducedMessages(messages);
     }
@@ -40,7 +41,7 @@ public class ProducerTestCases extends KafkaAbstractTestCases {
     private void validateProducedMessages(List<Object> messages) {
         Assert.assertNotNull("No messsage found.", messages);
         Assert.assertEquals("One message expected to be retrieved", 1, messages.size());
-        String messagePayload = new String((byte[])messages.get(0));
+        String messagePayload = (String) messages.get(0);
         Assert.assertEquals("Invalid payload retrieved.", TEST_MESSAGE_PAYLOAD, messagePayload);
     }
 
