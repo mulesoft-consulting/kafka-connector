@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:ApacheKafka="http://www.mulesoft.org/schema/mule/ApacheKafka" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ApacheKafka http://www.mulesoft.org/schema/mule/ApacheKafka/current/mule-ApacheKafka.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+    <ApacheKafka:config name="Apache_Kafka__Configuration_No_Auth" bootstrapServers="localhost:9092" zookeeperUrl="localhost:2181" groupId="mule-consumer" doc:name="Apache Kafka: Configuration" brokerList="localhost" brokerPort="9092">
+        <ApacheKafka:producer-extended-properties>
+            <ApacheKafka:producer-extended-property key="Entry">a</ApacheKafka:producer-extended-property>
+        </ApacheKafka:producer-extended-properties>
+    </ApacheKafka:config>
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <ApacheKafka:config name="Apache_Kafka__Configuration_Auth" bootstrapServers="ec2-54-191-181-155.us-west-2.compute.amazonaws.com:9093" zookeeperUrl="ec2-54-191-181-155.us-west-2.compute.amazonaws.com:2181" groupId="mule-consumer" brokerList="ec2-54-191-181-155.us-west-2.compute.amazonaws.com" brokerPort="9093" doc:name="Apache Kafka: Configuration">
+        <ApacheKafka:producer-extended-properties>
+            <ApacheKafka:producer-extended-property key="ssl.truststore.location">/home/bogdan.ilies/certificates/cacerts</ApacheKafka:producer-extended-property>
+            <ApacheKafka:producer-extended-property key="ssl.truststore.password">changeit</ApacheKafka:producer-extended-property>
+            <ApacheKafka:producer-extended-property key="ssl.keystore.location">/home/bogdan.ilies/certificates/broker.keystore.jks</ApacheKafka:producer-extended-property>
+            <ApacheKafka:producer-extended-property key="ssl.keystore.password">mulesoft</ApacheKafka:producer-extended-property>
+            <ApacheKafka:producer-extended-property key="security.protocol">SSL</ApacheKafka:producer-extended-property>
+            <ApacheKafka:producer-extended-property key="ssl.keystore.type">JKS</ApacheKafka:producer-extended-property>
+            <ApacheKafka:producer-extended-property key="ssl.truststore.type">JKS</ApacheKafka:producer-extended-property>
+            <ApacheKafka:producer-extended-property key="ssl.key.password">mulesoft</ApacheKafka:producer-extended-property>
+        </ApacheKafka:producer-extended-properties>
+        <ApacheKafka:consumer-group-extended-properties>
+            <ApacheKafka:consumer-group-extended-property key="security.protocol">SSL</ApacheKafka:consumer-group-extended-property>
+            <ApacheKafka:consumer-group-extended-property key="ssl.truststore.location">/home/bogdan.ilies/certificates/cacerts</ApacheKafka:consumer-group-extended-property>
+            <ApacheKafka:consumer-group-extended-property key="ssl.truststore.password">changeit</ApacheKafka:consumer-group-extended-property>
+            <ApacheKafka:consumer-group-extended-property key="ssl.keystore.location">/home/bogdan.ilies/certificates/broker.keystore.jks</ApacheKafka:consumer-group-extended-property>
+            <ApacheKafka:consumer-group-extended-property key="ssl.keystore.password">mulesoft</ApacheKafka:consumer-group-extended-property>
+            <ApacheKafka:consumer-group-extended-property key="ssl.keystore.type">JKS</ApacheKafka:consumer-group-extended-property>
+            <ApacheKafka:consumer-group-extended-property key="ssl.truststore.type">JKS</ApacheKafka:consumer-group-extended-property>
+            <ApacheKafka:consumer-group-extended-property key="ssl.key.password">mulesoft</ApacheKafka:consumer-group-extended-property>
+        </ApacheKafka:consumer-group-extended-properties>
+    </ApacheKafka:config>
+    <!-- <flow name="kafka-evaluationFlow2">
+        <ApacheKafka:consumer-group config-ref="Apache_Kafka__Configuration_No_Auth" topic="test" partitions="1" doc:name="Kafka Consumer Group (Streaming)"/>
+        <byte-array-to-string-transformer doc:name="Byte Array to String"/>
+        <logger message="Message came through ConsumerGoup without Auth: #[payload]" level="INFO" doc:name="Logger"/>
+    </flow>
+    <flow name="kafka-evaluationFlow1">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/pushNoAuth" doc:name="HTTP"/>
+        <ApacheKafka:producer config-ref="Apache_Kafka__Configuration_No_Auth" key="#[server.dateTime.getMilliSeconds()]" message="#[payload]" topic="test" events="1" doc:name="Apache Kafka"/>
+    </flow> -->
+    <flow name="kafka-evaluationFlow">
+        <ApacheKafka:consumer-group config-ref="Apache_Kafka__Configuration_Auth" topic="one-replica" partitions="1" doc:name="Apache Kafka (Streaming)"/>
+        <byte-array-to-string-transformer doc:name="Byte Array to String"/>
+        <logger message="Message came through ConsumerGoup with Auth: #[payload]" level="INFO" doc:name="Logger"/>
+    </flow>
+    <flow name="kafka-evaluationFlow3">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/pushAuth" doc:name="HTTP"/>
+        <ApacheKafka:producer config-ref="Apache_Kafka__Configuration_Auth" key="#[server.dateTime.getMilliSeconds()]" message="#[payload]" topic="one-replica" events="1" doc:name="Apache Kafka"/>
+    </flow>
+</mule>

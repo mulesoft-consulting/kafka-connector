@@ -7,8 +7,16 @@
        <Console name="STDOUT" target="SYSTEM_OUT">
            <PatternLayout pattern="${PATTERN}"/>
        </Console>
+       <RollingFile name="file" fileName="logs${sys:file.separator}kafka-evaluation.log"
+                    filePattern="logs${sys:file.separator}kafka-evaluation-%i.log">
+           <PatternLayout pattern="%d [%t] %-5p %c - %m%n" />
+           <SizeBasedTriggeringPolicy size="10 MB" />
+           <DefaultRolloverStrategy max="10"/>
+       </RollingFile>
    </Appenders>
    <Loggers>
+       <AsyncLogger name="org.mule.modules.kafka" level="DEBUG"/>
+
        <Root level="WARN">
            <AppenderRef ref="STDOUT"/>
        </Root>

@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.mule.module</groupId>
+    <groupId>org.mule.modules</groupId>
     <artifactId>mule-module-kafka</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>mule-module</packaging>
@@ -11,44 +11,44 @@
     <parent>
         <groupId>org.mule.tools.devkit</groupId>
         <artifactId>mule-devkit-parent</artifactId>
-        <version>3.8.0</version>
+        <version>3.8.1</version>
     </parent>
 
     <properties>
-        <category>Community</category>
+        <category>Select</category>
         <licensePath>LICENSE.md</licensePath>
         <devkit.studio.package.skip>false</devkit.studio.package.skip>
     </properties>
     <dependencies>
-    	<dependency>
-		    <groupId>kafka</groupId>
-		    <artifactId>kafka-clients</artifactId>
-		    <version>0.9.0</version>
-		</dependency>
-    	<dependency>
-		    <groupId>kafka</groupId>
-		    <artifactId>kafka-runtime</artifactId>
-		    <version>0.9.0</version>
-		</dependency>
-		<dependency>
-    		<groupId>org.scala-lang</groupId>
-    		<artifactId>scala-library</artifactId>
-    		<version>2.11.7</version>
-		</dependency>
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-parser-combinators</artifactId>
-			<version>2.11.0-M4</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>0.9.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>connect-runtime</artifactId>
+            <version>0.9.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.11</artifactId>
+            <version>0.9.0.0</version>
+        </dependency>
 		<dependency>
 			<groupId>com.101tec</groupId>
 			<artifactId>zkclient</artifactId>
-			<version>0.7</version>
+			<version>0.8</version>
 		</dependency>
 		<dependency>
             <groupId>com.yammer.metrics</groupId>
             <artifactId>metrics-core</artifactId>
             <version>2.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.intellij</groupId>
+            <artifactId>annotations</artifactId>
+            <version>12.0</version>
         </dependency>
     </dependencies>
     <repositories>
@@ -59,4 +59,37 @@
             <layout>default</layout>
         </repository>
     </repositories>
+
+
+    <distributionManagement>
+        <repository>
+            <id>mule-ee-releases</id>
+            <name>MuleEE Releases Repository</name>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/releases-ee/</url>
+        </repository>
+        <snapshotRepository>
+            <id>mule-ee-snapshots</id>
+            <name>MuleEE Snapshots Repository</name>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/ci-snapshots/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.mule.certification</groupId>
+                <artifactId>project-structure-validation</artifactId>
+                <version>1.0.5</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>validate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
